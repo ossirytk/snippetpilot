@@ -1,0 +1,1 @@
+"""snippetpilot MCP server."""
