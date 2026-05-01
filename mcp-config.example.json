@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "snippetpilot": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/snippetpilot", "snippetpilot"],
+      "tools": ["*"]
+    }
+  }
+}
