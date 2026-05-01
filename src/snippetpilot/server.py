@@ -120,7 +120,12 @@ def save_snippet(
         msg = "code must not be empty"
         raise ValueError(msg)
 
-    normalized_tags = sorted({_normalize(t) for t in (tags or []) if t.strip()})
+    raw_tags = [t for t in (tags or []) if t.strip()]
+    for tag in raw_tags:
+        if "," in tag:
+            msg = f"tag must not contain a comma: {tag!r}"
+            raise ValueError(msg)
+    normalized_tags = sorted({_normalize(t) for t in raw_tags})
     lang = _normalize(language)
 
     with get_connection() as conn:

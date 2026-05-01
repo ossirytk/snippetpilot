@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import json
+from typing import TYPE_CHECKING
 
 import pytest
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 from snippetpilot.server import (
     delete_snippet,
@@ -46,6 +50,11 @@ def test_save_snippet_empty_title_raises(db: None) -> None:
 def test_save_snippet_empty_code_raises(db: None) -> None:
     with pytest.raises(ValueError, match="code"):
         save_snippet(title="T", code="")
+
+
+def test_save_snippet_tag_with_comma_raises(db: None) -> None:
+    with pytest.raises(ValueError, match="comma"):
+        save_snippet(title="T", code="x", tags=["foo,bar"])
 
 
 def test_save_snippet_no_tags(db: None) -> None:
@@ -232,7 +241,7 @@ def test_delete_removes_from_search_index(db: None) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_export_json(db: None, tmp_path: pytest.TempPathFactory) -> None:
+def test_export_json(db: None, tmp_path: Path) -> None:
     save_snippet(title="A", code="a = 1", language="python", tags=["math"])
     save_snippet(title="B", code="b = 2")
     out = tmp_path / "out.json"
@@ -245,7 +254,7 @@ def test_export_json(db: None, tmp_path: pytest.TempPathFactory) -> None:
     assert data[0]["tags"] == ["math"]
 
 
-def test_export_markdown(db: None, tmp_path: pytest.TempPathFactory) -> None:
+def test_export_markdown(db: None, tmp_path: Path) -> None:
     save_snippet(title="Snippet", code="print('hi')", language="python")
     out = tmp_path / "out.md"
     result = export_snippets(path=str(out), format="markdown")
@@ -256,7 +265,7 @@ def test_export_markdown(db: None, tmp_path: pytest.TempPathFactory) -> None:
     assert "```python" in content
 
 
-def test_export_markdown_handles_backticks(db: None, tmp_path: pytest.TempPathFactory) -> None:
+def test_export_markdown_handles_backticks(db: None, tmp_path: Path) -> None:
     save_snippet(title="T", code="before\n```nested```\nafter")
     out = tmp_path / "bt.md"
     export_snippets(path=str(out), format="markdown")
@@ -265,12 +274,12 @@ def test_export_markdown_handles_backticks(db: None, tmp_path: pytest.TempPathFa
     assert "````" in content
 
 
-def test_export_invalid_format_raises(db: None, tmp_path: pytest.TempPathFactory) -> None:
+def test_export_invalid_format_raises(db: None, tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="format"):
         export_snippets(path=str(tmp_path / "out.txt"), format="xml")
 
 
-def test_export_empty_library(db: None, tmp_path: pytest.TempPathFactory) -> None:
+def test_export_empty_library(db: None, tmp_path: Path) -> None:
     out = tmp_path / "empty.json"
     result = export_snippets(path=str(out), format="json")
     assert result["count"] == 0
