@@ -23,7 +23,102 @@ snippetpilot stores reusable code snippets locally in a SQLite database. Snippet
 
 ## Installation
 
-> Coming soon.
+**Requires:** Python 3.12+, [uv](https://docs.astral.sh/uv/)
+
+### Option A — Install as a uv tool (recommended)
+
+```sh
+uv tool install git+https://github.com/ossirytk/snippetpilot
+```
+
+Verify:
+
+```sh
+snippetpilot --help
+```
+
+To update later:
+
+```sh
+uv tool upgrade snippetpilot
+```
+
+### Option B — Clone and run from source
+
+```sh
+git clone https://github.com/ossirytk/snippetpilot
+cd snippetpilot
+uv sync
+```
+
+---
+
+## Configuration
+
+### GitHub Copilot CLI
+
+Add to `~/.copilot/mcp-config.json`:
+
+**Option A (installed tool):**
+
+```json
+{
+  "mcpServers": {
+    "snippetpilot": {
+      "type": "stdio",
+      "command": "snippetpilot"
+    }
+  }
+}
+```
+
+**Option B (local clone):**
+
+```json
+{
+  "mcpServers": {
+    "snippetpilot": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/snippetpilot", "snippetpilot"]
+    }
+  }
+}
+```
+
+### VS Code Copilot
+
+Add to your user-level MCP config file:
+- **Linux:** `~/.config/Code/User/mcp.json`
+- **macOS:** `~/Library/Application Support/Code/User/mcp.json`
+- **Windows:** `%APPDATA%\Code\User\mcp.json`
+
+**Option A:**
+
+```json
+{
+  "servers": {
+    "snippetpilot": {
+      "type": "stdio",
+      "command": "snippetpilot"
+    }
+  }
+}
+```
+
+**Option B:**
+
+```json
+{
+  "servers": {
+    "snippetpilot": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/snippetpilot", "snippetpilot"]
+    }
+  }
+}
+```
 
 ---
 
